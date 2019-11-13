@@ -20,7 +20,9 @@ public class TestDAO {
             UtenteDAO user = daofactory.getDAO(UtenteDAO.class);
             utente =  user.getUserByEmail(email);
         }
-        catch(DAOException | DAOFactoryException ex1){}
+        catch(DAOException | DAOFactoryException ex1){
+            ex1.printStackTrace();
+        }
 
         //String nome = utente.getNome();
         System.out.println("JAMBISSIMO");

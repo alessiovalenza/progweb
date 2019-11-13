@@ -17,69 +17,31 @@ import java.util.List;
 
 @WebServlet(name="LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
-    int a;
+
     private String email;
     private String password;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("in LoginServletSession doPost() method");
+        System.out.println("in LoginServlet doPost method");
         email = request.getParameter("username");
         password = request.getParameter("password");
 
-        Utente user = null;
-        List<Utente> listOfPazienti = null;
+        Utente utente = null;
         try {
-            System.out.println("qui1");
             DAOFactory daoFactory = JDBCDAOFactory.getInstance();
             UtenteDAO userdao = daoFactory.getDAO(UtenteDAO.class);
-            user = userdao.getUserByEmail(email);
-            System.out.println("qui2");
+            utente = userdao.getUserByEmail(email);
 
-            listOfPazienti = userdao.getPazientiByMedicoBase(user.getId());
 
-            System.out.println("qui3");
-        } catch (DAOFactoryException ex) {
-        } catch (DAOException ex2) {
+        } catch (DAOFactoryException | DAOException ex) {
+            ex.printStackTrace();
         }
 
-        System.out.println(user.getNome());
-
-        if(listOfPazienti == null){
-            System.out.println("stocazzo");
-        }
-        System.out.println(listOfPazienti.size());
-
-        for(int i=0;i<listOfPazienti.size();i++){
-            System.out.println(("lol"));
-            System.out.println(listOfPazienti.get(i).getNome());
-        }
-
-        /*
-        try {
-            String emaill = user.getEmail(); //non esegue
-            System.out.println(emaill);
-        } catch (Exception ex2){}
-
-
-        if(checkCredentials(username, pwd)) {
-            System.out.println("check passed");
-            HttpSession Session = request.getSession();
-            Session.setAttribute("user", my_username);
-            Session.setMaxInactiveInterval(60);
-            response.sendRedirect("index.jsp");
-        }else{
-            request.setAttribute("message", "Username o Password errati");
-            getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
-        }
-        */
+        request.setAttribute("name", utente.getNome());
+        getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        String url = "/index.jsp";
-        getServletContext().getRequestDispatcher(url).forward(request, response);
-    }
 
-    public boolean checkCredentials(String username, String password) {
-        return (this.email.equals(username) && this.password.equals(password));
     }
 }

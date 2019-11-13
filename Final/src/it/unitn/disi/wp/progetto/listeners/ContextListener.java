@@ -6,14 +6,17 @@ import it.unitn.disi.wp.progetto.persistence.dao.factories.jdbc.JDBCDAOFactory;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 import java.util.logging.Logger;
 
+@WebListener
 public class ContextListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent sce) {
-        String url = sce.getServletContext().getInitParameter("dburl");
-        String username = sce.getServletContext().getInitParameter("dbusername");
-        String password = sce.getServletContext().getInitParameter("dbpassword");
+
+        String url = "jdbc:postgresql://localhost:5432/postgres";
+        String username = "alessio_valenza";
+        String password = "admin";
 
         try {
             JDBCDAOFactory.configure(url, username, password);
