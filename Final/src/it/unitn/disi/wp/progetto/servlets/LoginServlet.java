@@ -23,25 +23,56 @@ public class LoginServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("in LoginServlet doPost method");
-        email = request.getParameter("username");
+        email = request.getParameter("email");
         password = request.getParameter("password");
 
+        Utente utente = doAuthN(email, password);
+
+        if (utente == null){
+            request.setAttribute("error", "Username o Password errati. Riprovare");
+            doGet(request, response);
+        }else{
+            request.setAttribute("name", utente.getNome());
+            request.setAttribute("surname", utente.getCognome());
+            getServletContext().getRequestDispatcher("/testing/loginCompleted.jsp").forward(request, response);
+        }
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        System.out.println("in LoginServlet doGet method");
+
+        String url = "/login.jsp";
+        getServletContext().getRequestDispatcher(url).forward(request, response);
+    }
+
+    private Utente checkUsername(String email, String password){
         Utente utente = null;
         try {
             DAOFactory daoFactory = JDBCDAOFactory.getInstance();
             UtenteDAO userdao = daoFactory.getDAO(UtenteDAO.class);
             utente = userdao.getUserByEmail(email);
-
-
         } catch (DAOFactoryException | DAOException ex) {
             ex.printStackTrace();
         }
 
-        request.setAttribute("name", utente.getNome());
-        getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
+        return utente;
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    private boolean checkPassword(Utente utente){
+        boolean retval = false;
+        if (utente != null){
+            /**
+             * qui va implementata la verifica della password
+             */
+            retval = true;
+        }
+        return retval;
+    }
 
+    private Utente doAuthN(String email, String password){
+        Utente utente = checkUsername(email, password);
+        boolean authN = checkPassword(utente);
+        utente = authN ? utente : null;
+        return utente;
     }
 }
